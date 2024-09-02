@@ -91,7 +91,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let target = Path::new(&config.target);
     let mut hb = Handlebars::new();
 
-    if let Ok(counter) = process_dir(
+    match process_dir(
         &source,
         &target,
         "hbs.html",
@@ -99,7 +99,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         &config.vars,
         &mut hb,
     ) {
-        println!("processed {} files", counter);
+        Ok(counter) => println!("processed {} files", counter),
+        Err(e) => {
+            eprintln!("{e}");
+            return Err(Box::new(e));
+        }
     };
 
     Ok(())
