@@ -43,13 +43,19 @@ fn process_dir(
                     // Determine the relative path to the source directory
                     let relative_path = path.strip_prefix(source).unwrap();
                     let target_file_path = target.join(relative_path);
+                    let target_file_path_str = target_file_path.to_str().unwrap();
 
-                    if ext == render_extension {
+                    let do_render = ext == render_extension;
+                    let do_copy = extensions_to_copy.contains(&ext.to_string());
+
+                    if do_render || do_copy {
                         // Ensure target directory exists
                         if let Some(parent) = target_file_path.parent() {
                             fs::create_dir_all(parent)?;
                         }
+                    }
 
+                    if do_render {
                         // Render and write the template
                         let template = fs::read_to_string(&path)?;
                         let rendered_result = hb.render_template(&template, &vars);
@@ -64,9 +70,9 @@ fn process_dir(
                             }
                         };
 
-                        fs::write(target_file_path, rendered)?;
+                        fs::write(target_file_path_str.replace(".hbs.", "."), rendered)?;
                         counter += 1;
-                    } else if extensions_to_copy.contains(&ext.to_string()) {
+                    } else if do_copy {
                         fs::copy(path, target_file_path)?;
                         counter += 1;
                     }
