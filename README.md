@@ -24,4 +24,6 @@ into `www`.
 
 - [ ] improve error handling and messages
 - [ ] figure out partials
+- [ ] support dev & prod builds, allow different vars for each, needed for `base_url`
+- [ ] release binaries with gh actions
 
